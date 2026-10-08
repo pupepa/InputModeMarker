@@ -10,6 +10,7 @@ import SwiftUI
 /// UserDefaultsのキー
 enum SettingsKey {
   static let indicatorSize = "indicatorSize"
+  static let indicatorOpacity = "indicatorOpacity"
   static let japaneseColor = "japaneseColor"
   static let alphabetColor = "alphabetColor"
 }

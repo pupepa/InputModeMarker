@@ -27,11 +27,17 @@ struct IndicatorView: View {
   @AppStorage(SettingsKey.alphabetColor)
   private var alphabetColor = IndicatorColor.blue
 
+  @AppStorage(SettingsKey.indicatorOpacity)
+  private var indicatorOpacity = 1.0
+
   @State
   private var isPulsing = false
 
   @State
   private var isHovering = false
+
+  @State
+  private var isShowingOpacityControl = false
 
   @State
   private var launchAtLogin = SMAppService.mainApp.status == .enabled
@@ -42,6 +48,7 @@ struct IndicatorView: View {
       size: layout.size,
       color: monitor.mode == .japanese ? japaneseColor : alphabetColor
     )
+    .opacity(indicatorOpacity)
     .scaleEffect(isPulsing ? 1.1 : 1)
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .contentShape(.rect)
@@ -63,6 +70,10 @@ struct IndicatorView: View {
       ColorMenu(title: "日本語の背景色", selection: $japaneseColor)
       ColorMenu(title: "英数の背景色", selection: $alphabetColor)
 
+      Button("不透明度を調整…") {
+        isShowingOpacityControl = true
+      }
+
       Divider()
 
       Button("サイズをリセット", action: actions.resetSize)
@@ -73,6 +84,9 @@ struct IndicatorView: View {
       Button("あAマーカーを終了") {
         NSApplication.shared.terminate(nil)
       }
+    }
+    .popover(isPresented: $isShowingOpacityControl, arrowEdge: .bottom) {
+      OpacityControl(opacity: $indicatorOpacity)
     }
     .onChange(of: launchAtLogin) { _, newValue in
       updateLaunchAtLogin(newValue)
@@ -139,6 +153,27 @@ private struct ColorMenu: View {
         .tag(item)
       }
     }
+  }
+}
+
+/// マーカーの不透明度を連続調整するポップオーバー
+private struct OpacityControl: View {
+  @Binding
+  var opacity: Double
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 10) {
+      HStack {
+        Text("不透明度")
+        Spacer()
+        Text(opacity, format: .percent.precision(.fractionLength(0)))
+          .monospacedDigit()
+      }
+
+      Slider(value: $opacity, in: 0.1...1)
+    }
+    .padding()
+    .frame(width: 240)
   }
 }
 
