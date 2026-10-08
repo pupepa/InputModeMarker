@@ -87,7 +87,7 @@ enum IndicatorColor: String, CaseIterable, Identifiable {
 @Observable
 final class IndicatorLayout {
   static let defaultSize = 40.0
-  static let sizeRange = 12.0...120.0
+  static let sizeRange = 12.0...640.0
 
   /// 文字の大きさ。バッジやパネルの寸法はこれを基準に決まる
   var size: Double
